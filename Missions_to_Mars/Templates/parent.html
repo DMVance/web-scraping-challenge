@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+        <title>Mars Web Scraping</title>
+    </head>
+    <body class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <p class=" display-1 text-center">Mission to Mars</h1>
+        </div>
+    </div>
+        <ul class="list-inline text-center">
+            <li class="list-inline-item emphasis"><a href="{{ url_for('index') }}">Homepage</a></li>
+            <li class="list-inline-item">||</li>
+            <li class="list-inline-item"><a href="{{ url_for('scraper') }}">Scrape the web for Mars data!</a></li>
+        </ul>
+        <p class="text-center"><small class="text-muted">Please be patient; scraping takes 20-60 seconds</small></p>
+        <hr>
+        {% block content %}{% endblock%}
+    </body>
+</html>

@@ -1,0 +1,22 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+requests = "*"
+beautifulsoup4 = "*"
+selenium = "*"
+lxml = "*"
+pymongo = "*"
+mongo = "*"
+pandas = "*"
+flask = "*"
+flask-pymongo = "*"
+dnspython = "*"
+jsonify = "*"
+
+[requires]
+python_version = "3.8"
