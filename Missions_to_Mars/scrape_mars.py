@@ -33,23 +33,24 @@ def scrape():
     #### Scrape NASA Mars News ####
     
     print("""
-    # ========================
-    # NASA MARS NEWS SCRAPE
-    # ========================
+    #### Scrape NASA Mars News ####
     """)
 
-    URL = "https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest"
-
-    soup = BeautifulSoup(URL, "html.parser") # Parse HTML with Beautiful Soup
+    mars_url = "https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest"
+    mars_html = get_html(mars_url, wait=10)
+    soup = BeautifulSoup(mars_html, "html.parser") # Parse HTML with Beautiful Soup
+    
+    # URL = "https://mars.nasa.gov/news/?page=0&per_page=40&order=publish_date+desc%2Ccreated_at+desc&search=&category=19%2C165%2C184%2C204&blank_scope=Latest"
+    # soup = BeautifulSoup(URL, "html.parser")
 
     # Retrieve the latest element that contains news title and news_paragraph
-    news_t = soup.find_all("div", class_="content_title")
-    for new in news_t:
-        print(new)
+    news_t = soup.find("div", class_="content_title").text
+#     for new in news_t:
+#         print(new)
         
-    news_p = soup.find_all("div", class_="article_teaser_body")
-    for newsp in news_p:
-        print(newsp)
+    news_p = soup.find("div", class_="article_teaser_body").text
+#     for newsp in news_p:
+#         print(newsp)
         
     news = [news_t, news_p]
 
@@ -60,15 +61,13 @@ def scrape():
     #### Scrape Mars Featured Image ####
 
     print("""
-    # ========================
-    # FEATURED IMAGE SCRAPE
-    # ========================
+    #### Scrape Mars Featured Image ####
     """)
 
     featured_image_url = "https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars"
 
     # Use Selenium to scrape URL
-    featured_image_html = get_html(featured_image_url, wait=5)
+    featured_image_html = get_html(featured_image_url, wait=10)
 
     # Create beautiful soup object
     soup = BeautifulSoup(featured_image_html, "html.parser")
@@ -84,15 +83,13 @@ def scrape():
     #### Scrape Mars Facts ####
 
     print("""
-    # ========================
-    # MARS FACTS SCRAPE
-    # ========================
+    #### Scrape Mars Facts ####
     """)
 
     mars_facts_url = "https://space-facts.com/mars/"
 
     # Call selenium function to scrape url
-    mars_facts_html = get_html(mars_facts_url, wait=5)
+    mars_facts_html = get_html(mars_facts_url, wait=10)
 
     soup = BeautifulSoup(mars_facts_html, "html.parser")
 
@@ -102,7 +99,10 @@ def scrape():
     dfs = pd.read_html(table_html_str)
     df = dfs[0]
     df = df.rename(columns={0: "Characteristic", 1: "Value"})
-    # print(df)
+    df = df.set_index("Characteristic")
+    df_dict = df.T.to_dict()
+    # print(df_dict)
+    print(df)
 
     facts = [table_html_str]
 
@@ -110,15 +110,13 @@ def scrape():
     #### Scrape Mars Hemispheres ####
 
     print("""
-    # ========================
-    # MARS HEMISPHERES SCRAPE
-    # ========================
+    #### Scrape Mars Hemispheres ####
     """)
 
     hemispheres_url = "https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars"
 
     # Scrape URL with Selenium
-    hemispheres_html = get_html(hemispheres_url, wait=5)
+    hemispheres_html = get_html(hemispheres_url, wait=10)
 
     # Create BeautifulSoup object
     soup = BeautifulSoup(hemispheres_html, "html.parser")
@@ -138,32 +136,28 @@ def scrape():
     # Mars dictionary
 
     print("""
-    # ========================
-    # FULL MARS DICTIONARY
-    # ========================
+    #### Create Mars dictionary ####
     """)
 
-    # mars_dict = {}
+#     mars_dict = {}
     mars_dict = {
         "news": news,
         "featured_image": featured_image_link,
-        "facts": facts,
+        "facts": df_dict,
         "hemispheres": hemispheres_list
     }
 
     print(mars_dict)
 
     print("""
-    # ------------------------
-    # mongo insert...
+    ***** Inserting data into Mongo Database... *****
     """)
 
     db.marscrape.drop()
     db.marscrape.insert_one(mars_dict)
 
     print("""
-    # successful!
-    # ------------------------
+    ***** ...Successfully inserted data. *****
     """)
 
     return mars_dict
@@ -172,16 +166,14 @@ def scrape():
 def get_mongo_dict():
 
     print("""
-    # ========================
-    # MONGO QUERY
-    # ========================
+    #### Mongo Query ####
     """)
 
     mongo_dict = db.marscrape.find_one()
 
     print(type(mongo_dict))
-    # for key, value in mongo_dict.items():
-    #     print(key)
-    #     print(value)
+    for key, value in mongo_dict.items():
+        print(key)
+        print(value)
     
     return mongo_dict
