@@ -143,7 +143,7 @@ def scrape():
     mars_dict = {
         "news": news,
         "featured_image": featured_image_link,
-        "facts": df_dict,
+        "facts": facts,
         "hemispheres": hemispheres_list
     }
 
